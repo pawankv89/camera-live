@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>LiveShare</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<main class="container">
+  <header><h1>📡 LiveShare</h1><p>Cross-platform WebRTC video sharing</p></header>
+
+  <section id="home" class="card">
+    <h2>Choose mode</h2>
+    <div class="grid2">
+      <button id="senderBtn" class="primary">📷 Start as Sender</button>
+      <button id="viewerBtn">▶️ Join as Viewer</button>
+    </div>
+    <div id="joinBox" class="hidden">
+      <label>Room ID</label>
+      <input id="roomInput" placeholder="e.g. ABC123">
+      <button id="joinBtn" class="primary">Join Room</button>
+    </div>
+    <p class="hint">Use HTTPS for camera/microphone access on iPhone and for production deployments.</p>
+  </section>
+
+  <section id="sender" class="hidden">
+    <div class="toolbar">
+      <span id="senderStatus" class="status">Starting…</span>
+      <button id="stopSender">Stop</button>
+    </div>
+    <video id="localVideo" autoplay playsinline muted></video>
+    <div class="controls">
+      <button id="flipCamera">🔄 Camera</button>
+      <button id="muteMic">🎙️ Mute</button>
+      <button id="recordBtn">⏺ Record</button>
+      <button id="qrBtn">▣ QR</button>
+    </div>
+    <div class="card">
+      <b>Room:</b> <span id="roomLabel"></span>
+      <div id="qrArea" class="hidden"><img id="qrImage" alt="Room QR"><p id="joinUrl"></p></div>
+      <p>Viewers: <span id="viewerCount">0</span>/5</p>
+    </div>
+  </section>
+
+  <section id="viewer" class="hidden">
+    <div class="toolbar">
+      <span id="viewerStatus" class="status">Connecting…</span>
+      <button id="stopViewer">Leave</button>
+    </div>
+    <video id="remoteVideo" autoplay playsinline controls></video>
+    <div class="controls">
+      <button id="fullscreenBtn">⛶ Fullscreen</button>
+      <button id="remoteMute">🔊 Mute</button>
+    </div>
+  </section>
+
+  <section id="history" class="card">
+    <h3>Recent sessions</h3>
+    <div id="historyList">Loading…</div>
+  </section>
+</main>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
