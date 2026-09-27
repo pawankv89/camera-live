@@ -76,6 +76,54 @@ socket.on("sender-left",()=>{status("viewerStatus","Sender disconnected");$("rem
 socket.on("room-error",msg=>alert(msg));
 
 function updateCount(){$("viewerCount").textContent=viewerIds.size}
+
+async function flipCamera() {
+  if (!localStream) return;
+
+  // 1. Determine the new direction
+  cameraFacing = cameraFacing === "user" ? "environment" : "user";
+
+  // 2. IMPORTANT FOR SAMSUNG: Explicitly stop the existing video tracks first
+  const oldTracks = localStream.getVideoTracks();
+  oldTracks.forEach(track => track.stop());
+
+  try {
+    // 3. Request the new stream now that the camera hardware has been released
+    const newStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: cameraFacing },
+      audio: false
+    });
+
+    const newTrack = newStream.getVideoTracks()[0];
+
+    // 4. Update your localStream structure
+    if (oldTracks.length > 0) {
+      localStream.removeTrack(oldTracks[0]);
+    }
+    localStream.addTrack(newTrack);
+
+    // 5. Update the local video element rendering
+    const videoElement = $("localVideo");
+    videoElement.srcObject = localStream;
+    
+    // Explicitly call play() as some mobile browsers pause on track changes
+    videoElement.play().catch(e => console.error("Video play failed:", e));
+
+    // 6. Update WebRTC peer connections seamlessly using replaceTrack
+    for (const pc of peers.values()) {
+      const sender = pc.getSenders().find(s => s.track?.kind === "video");
+      if (sender) {
+        await sender.replaceTrack(newTrack);
+      }
+    }
+  } catch (error) {
+    console.error("Failed to switch camera:", error);
+    // Optional rollback fallback: if switching fails, reset state variable
+    cameraFacing = cameraFacing === "user" ? "environment" : "user";
+  }
+}
+
+// Not worked in Samsung / Android Device
 async function flipCamera(){
   if(!localStream)return;
   cameraFacing=cameraFacing==="user"?"environment":"user";
