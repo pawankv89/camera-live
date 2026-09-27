@@ -124,6 +124,7 @@ async function flipCamera() {
 }
 
 // Not worked in Samsung / Android Device
+/*
 async function flipCamera(){
   if(!localStream)return;
   cameraFacing=cameraFacing==="user"?"environment":"user";
@@ -134,7 +135,7 @@ async function flipCamera(){
   localStream.removeTrack(old);localStream.addTrack(newTrack);
   $("localVideo").srcObject=localStream;
   for(const pc of peers.values()){const sender=pc.getSenders().find(s=>s.track?.kind==="video");if(sender)await sender.replaceTrack(newTrack)}
-}
+}*/
 function toggleMic(){
   micMuted=!micMuted;
   localStream?.getAudioTracks().forEach(t=>t.enabled=!micMuted);
